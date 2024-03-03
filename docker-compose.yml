@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+
+  inventory_management_system:
+    container_name: "inventory_management_system"
+    build:
+      context: .
+      dockerfile: "src/inventory_management_system/Dockerfile"
+    ports:
+      - "${INVENTORY_MANAGEMENT_PORT}:${INVENTORY_MANAGEMENT_PORT}"
+    volumes:
+      - ./src/inventory_management_system:/src/inventory_management_system
+    env_file:
+      - .env
+
+  postgres:
+    container_name: postgres
+    image: postgres:15
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    environment:
+      - POSTGRES_USER:${POSTGRES_USER}
+      - POSTGRES_PASSWORD:${POSTGRES_PASSWORD}
+      - POSTGRES_DB:${POSTGRES_DB}
+      - PGPORT=${POSTGRES_PORT}
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    restart: always
